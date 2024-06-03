@@ -1,4 +1,6 @@
+from django_filters import OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.generics import ListCreateAPIView, ListAPIView, RetrieveUpdateAPIView, CreateAPIView
 from rest_framework.permissions import IsAuthenticated
@@ -29,9 +31,8 @@ class VacancyCreateAPIView(CreateAPIView):
 class UserListAPIView(ListAPIView):
     queryset = User.objects.all()
     serializer_class = UserListSerializer
-    filter_backends = (DjangoFilterBackend,)
-    filter_class = UserFilters
-    filter_fields = ('work_time',)
+    filter_backends = (DjangoFilterBackend, OrderingFilter,)
+    ordering_fields = ('id', 'seniority')
 
 
 class VacancyUpdateAPIView(RetrieveUpdateAPIView):
@@ -40,7 +41,14 @@ class VacancyUpdateAPIView(RetrieveUpdateAPIView):
 
     def put(self, request, *args, **kwargs):
         vacancy = Vacancy.objects.get(pk=kwargs['pk'])
-        if vacancy.title in self.request.user.related_name('vacancies').title:
+        if vacancy.user.id == request.user.id:
             super(VacancyUpdateAPIView, self).put(request, *args, **kwargs)
-        else:
-            return Response("you can't update vacancy")
+            return Response('Update', status=status.HTTP_200_OK)
+        return Response("you can't update vacancy")
+
+    def patch(self, request, *args, **kwargs):
+        vacancy = Vacancy.objects.get(pk=kwargs['pk'])
+        if vacancy.user.id == request.user.id:
+            super(VacancyUpdateAPIView, self).put(request, *args, **kwargs)
+
+        return Response("you can't update vacancy")

@@ -39,4 +39,4 @@ class VacancyListCreateSerializer(serializers.ModelSerializer):
 class VacancyUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vacancy
-        exclude = 'id',
+        exclude = 'id', 'user', 'slug'

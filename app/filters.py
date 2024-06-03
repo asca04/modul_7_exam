@@ -13,15 +13,12 @@ class UserFilters(FilterSet):
 
 
 class VacancyFilters(FilterSet):
-    search_title = CharFilter(method='filter_title')
-    search_description = CharFilter(method='filter_description')
+    search_title = CharFilter(field_name='title', lookup_expr='icontains')
+    search_description = CharFilter(field_name='description', lookup_expr='icontains')
 
     class Meta:
         model = Vacancy
         fields = ['search_title', 'search_description']
 
-    def filter_title(self, queryset, name, value):
-        return queryset.filter(Vacancy__name__icontains=value)
 
-    def filter_description(self, queryset, name, value):
-        return queryset.filter(Vacancy__name__icontains=value)
+

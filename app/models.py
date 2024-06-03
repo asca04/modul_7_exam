@@ -44,7 +44,7 @@ class User(AbstractUser):
 class Vacancy(models.Model):
     title = models.CharField(max_length=50)
     slug = models.SlugField(unique=True)
-    descripton = models.CharField(max_length=50)
+    description = models.CharField(max_length=50)
     Company = models.CharField(max_length=100, null=True, blank=True)
     price = models.IntegerField(db_default=0, blank=True)
     location = models.TextField(blank=True)
